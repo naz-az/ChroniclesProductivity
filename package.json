@@ -1,0 +1,23 @@
+{
+  "name": "chroniclesproductivity",
+  "version": "1.0.0",
+  "description": "A task management application built with React TypeScript for the frontend and Express with SQLite for the backend.",
+  "main": "index.js",
+  "scripts": {
+    "start:backend": "cd backend && npm run dev",
+    "start:frontend": "cd frontend && npm run dev",
+    "dev:full": "concurrently \"npm run start:backend\" \"npm run start:frontend\"",
+    "install:all": "npm install && cd backend && npm install && cd ../frontend && npm install",
+    "seed:finance": "cd backend && npm run seed:finance",
+    "seed:fitness": "cd backend && npm run seed:fitness",
+    "seed:all": "cd backend && npm run seed:all",
+    "db:reset": "cd backend && npm run db:reset",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "concurrently": "^8.2.1"
+  }
+}

@@ -1,0 +1,257 @@
+/* Finance.css */
+
+/* Layout */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.tab-container {
+  width: 100%;
+}
+
+.page-title {
+  font-size: 2rem;
+  font-weight: bold;
+  margin: 20px 0;
+  padding-top: 15px;
+}
+
+/* Tab system */
+.tab-panel {
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  width: 100%;
+}
+
+.tab-list {
+  display: flex;
+  border-bottom: 1px solid #eee;
+}
+
+.tab-button {
+  flex: 1;
+  padding: 15px;
+  background: none;
+  border: none;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #555;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.tab-button:hover {
+  background-color: #f5f5f5;
+}
+
+.tab-button.active {
+  color: #3f51b5;
+  border-bottom: 2px solid #3f51b5;
+}
+
+.tab-panel-content {
+  padding: 20px;
+}
+
+/* Headers and buttons */
+.header-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.section-header {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 0;
+}
+
+.action-button {
+  background-color: #3f51b5;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 16px;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.action-button:hover {
+  background-color: #303f9f;
+}
+
+.icon {
+  margin-right: 8px;
+  font-size: 1.2rem;
+}
+
+/* Content areas */
+.content-paper {
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+}
+
+.list-item {
+  margin-bottom: 16px;
+  padding: 16px;
+  border: 1px solid #eee;
+  border-radius: 4px;
+}
+
+/* Grid layouts */
+.grid-container {
+  display: flex;
+  width: 100%;
+}
+
+.grid-item-left {
+  flex: 3;
+}
+
+.grid-item-right {
+  flex: 1;
+  text-align: right;
+}
+
+.grid-container-responsive {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.grid-item-responsive {
+  width: 100%;
+}
+
+/* Typography */
+.item-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 0 0 8px 0;
+}
+
+.item-subtitle {
+  font-size: 0.9rem;
+  color: #666;
+  margin: 0 0 4px 0;
+}
+
+.item-amount {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin: 0 0 8px 0;
+}
+
+.caption {
+  font-size: 0.8rem;
+  margin-top: 4px;
+}
+
+/* Utility classes */
+.flex-between {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.margin-bottom {
+  margin-bottom: 16px;
+}
+
+.margin-top {
+  margin-top: 8px;
+}
+
+/* Text colors */
+.income-text {
+  color: #4caf50;
+}
+
+.expense-text {
+  color: #f44336;
+}
+
+.error-text {
+  color: #f44336;
+}
+
+.warning-text {
+  color: #ff9800;
+}
+
+.highlight-text {
+  color: #3f51b5;
+}
+
+/* Badges */
+.badge {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  color: white;
+}
+
+.primary-badge {
+  background-color: #3f51b5;
+}
+
+.success-badge {
+  background-color: #4caf50;
+}
+
+.warning-badge {
+  background-color: #ff9800;
+}
+
+.recurring-badge {
+  margin-left: 8px;
+}
+
+/* Progress bar */
+.progress-bar {
+  height: 8px;
+  border-radius: 4px;
+  background-color: #e0e0e0;
+  position: relative;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background-color: #3f51b5;
+  position: absolute;
+  top: 0;
+  left: 0;
+  transition: width 0.5s ease-in-out;
+}
+
+.over-budget {
+  background-color: #f44336;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .grid-container {
+    flex-direction: column;
+  }
+  
+  .grid-item-right {
+    text-align: left;
+    margin-top: 10px;
+  }
+  
+  .tab-button {
+    padding: 10px 5px;
+    font-size: 0.9rem;
+  }
+} 

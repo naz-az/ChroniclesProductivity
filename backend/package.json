@@ -1,0 +1,36 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/index.js",
+  "scripts": {
+    "start": "node dist/src/index.js",
+    "dev": "nodemon src/index.ts",
+    "build": "tsc",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "seed:finance": "ts-node src/seed/seedFinance.ts",
+    "seed:fitness": "ts-node src/seed/seedFitness.ts",
+    "seed:investments": "ts-node src/seed/seedInvestments.ts",
+    "seed:all": "ts-node src/seed/seedAll.ts",
+    "check:finance": "node check-data.js finance",
+    "check:fitness": "node check-data.js fitness",
+    "check:investments": "node check-data.js investments",
+    "db:reset": "node -e \"const fs=require('fs');if(fs.existsSync('task.db'))fs.unlinkSync('task.db');fs.writeFileSync('task.db','');\" && npm run seed:all"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@types/cors": "^2.8.17",
+    "@types/express": "^4.17.21",
+    "@types/node": "^20.11.24",
+    "body-parser": "^1.20.2",
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "node-fetch": "^2.7.0",
+    "sqlite": "^5.1.1",
+    "sqlite3": "^5.1.7",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.3.3"
+  }
+}
