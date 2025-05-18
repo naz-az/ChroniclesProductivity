@@ -3,6 +3,8 @@ import { ElevenLabsClient } from 'elevenlabs';
 // --- IMPORTANT ---
 // Access environment variable using import.meta.env for Vite
 const elevenLabsApiKey = import.meta.env.VITE_ELEVENLABS_API_KEY || ""; 
+// Default ElevenLabs voice ID (can be overridden)
+const defaultVoiceId = import.meta.env.VITE_ELEVENLABS_DEFAULT_VOICE_ID || "";
 // --- IMPORTANT ---
 
 // Store the current audio element and its controller globally within this module
@@ -219,7 +221,7 @@ const cleanMarkdownFormatting = (text: string): string => {
  */
 export const playTextToSpeech = async (
   text: string,
-  voiceId: string = 'JBFqnCBsd6RMkjVDRZzb', // Only used for ElevenLabs
+  voiceId: string = defaultVoiceId, // Using environment variable instead of hardcoded ID
   onEnded: () => void,
   onError: (error: Error) => void
 ): Promise<AbortController> => {

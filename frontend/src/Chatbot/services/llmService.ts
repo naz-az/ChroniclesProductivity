@@ -75,12 +75,10 @@ const isAnthropicModel = (modelId: string): boolean => {
   return modelId.startsWith('claude-');
 };
 
-// Hardcoded API Key Placeholder
-// const googleApiKey = "AIzaSyC53r-FsCIXOn0VCcA4h5hvALYXpaTvkE0";
-
-const googleApiKey = "AIzaSyBU4W6HALypK1qwpYUiIAuP7CVLfR41VZk";
-// Placeholder for Anthropic API Key - **Replace with your actual key or use environment variables**
-const anthropicApiKey = ""; // TODO: Replace or use process.env
+// Use environment variables
+const googleApiKey = import.meta.env.VITE_GOOGLE_API_KEY || "";
+// Placeholder for Anthropic API Key
+const anthropicApiKey = import.meta.env.VITE_ANTHROPIC_API_KEY || ""; // Using environment variable
 
 export const sendMessageToLLM = async (
   messages: Message[],
