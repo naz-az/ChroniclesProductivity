@@ -1,4 +1,5 @@
-import { useState, useEffect, CSSProperties } from 'react'; // Added CSSProperties
+import { useState, useEffect } from 'react'; 
+import type { CSSProperties } from 'react';
 import axios from 'axios';
 
 interface Task {
@@ -9,6 +10,8 @@ interface Task {
   end_date: string;
   category: string;
   created_at: string;
+  order?: number; // Added for tracking display order
+  completed?: boolean; // Added for tracking completion status
 }
 
 interface FormData {
@@ -85,6 +88,8 @@ const SoftwareEngineering = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [deleteConfirmTask, setDeleteConfirmTask] = useState<Task | null>(null);
   const [expandedRows, setExpandedRows] = useState<number[]>([]);
+  const [draggedTask, setDraggedTask] = useState<Task | null>(null);
+  const [isDragging, setIsDragging] = useState(false);
   
   const fetchTasks = async () => {
     try {
@@ -94,7 +99,14 @@ const SoftwareEngineering = () => {
       const response = await axios.get('http://localhost:5000/api/tasks');
       // Sort by creation date initially, newest first if desired, or keep as is
       const sortedTasks = response.data.sort((a: Task, b: Task) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
-      setTasks(sortedTasks);
+      
+      // Add order property to each task based on its current position
+      const tasksWithOrder = sortedTasks.map((task: Task, index: number) => ({
+        ...task,
+        order: index
+      }));
+      
+      setTasks(tasksWithOrder);
       setError(null);
     } catch (err) {
       console.error('Error fetching tasks:', err);
@@ -232,6 +244,113 @@ const SoftwareEngineering = () => {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
+  const handleDragStart = (e: React.DragEvent<HTMLElement>, task: Task) => {
+    setDraggedTask(task);
+    setIsDragging(true);
+    
+    // Set drag image/ghost element appearance
+    if (e.dataTransfer && e.currentTarget) {
+      e.dataTransfer.effectAllowed = 'move';
+      e.dataTransfer.setData('text/plain', task.id.toString());
+      
+      // Optional: Create a custom drag image
+      const dragPreview = document.createElement('div');
+      dragPreview.style.padding = '10px 15px';
+      dragPreview.style.background = theme.primary;
+      dragPreview.style.color = theme.textHighlight;
+      dragPreview.style.borderRadius = '8px';
+      dragPreview.style.boxShadow = theme.shadow;
+      dragPreview.style.opacity = '0.9';
+      dragPreview.style.fontWeight = 'bold';
+      dragPreview.textContent = task.title;
+      document.body.appendChild(dragPreview);
+      e.dataTransfer.setDragImage(dragPreview, 20, 20);
+      
+      // Clean up the temporary element after a short delay
+      setTimeout(() => {
+        document.body.removeChild(dragPreview);
+      }, 100);
+    }
+  };
+
+  const handleDragOver = (e: React.DragEvent<HTMLElement>, targetTask: Task) => {
+    e.preventDefault();
+    e.stopPropagation();
+    e.dataTransfer.dropEffect = 'move';
+    
+    if (!draggedTask || draggedTask.id === targetTask.id) {
+      return;
+    }
+  };
+
+  const handleDrop = (e: React.DragEvent<HTMLElement>, targetTask: Task) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    if (!draggedTask || draggedTask.id === targetTask.id) {
+      setIsDragging(false);
+      setDraggedTask(null);
+      return;
+    }
+
+    // Reorder the tasks
+    const updatedTasks = [...tasks].sort((a, b) => 
+      (a.order !== undefined && b.order !== undefined) ? a.order - b.order : 0
+    );
+    
+    const draggedIndex = updatedTasks.findIndex(task => task.id === draggedTask.id);
+    const targetIndex = updatedTasks.findIndex(task => task.id === targetTask.id);
+    
+    if (draggedIndex !== -1 && targetIndex !== -1) {
+      // Remove the dragged task
+      const [movedTask] = updatedTasks.splice(draggedIndex, 1);
+      
+      // Insert at the target position
+      updatedTasks.splice(targetIndex, 0, movedTask);
+      
+      // Update order values
+      const reorderedTasks = updatedTasks.map((task, index) => ({
+        ...task,
+        order: index
+      }));
+      
+      setTasks(reorderedTasks);
+      
+      // Optional: Save order to backend
+      // This could be implemented as a bulk update or individual task updates
+      // saveTaskOrder(reorderedTasks);
+    }
+    
+    setIsDragging(false);
+    setDraggedTask(null);
+  };
+
+  const handleDragEnd = () => {
+    setIsDragging(false);
+    setDraggedTask(null);
+  };
+
+  // Optional: Function to save the task order to the backend
+  // Uncomment and implement if you want to persist the order
+  /*
+  const saveTaskOrder = async (reorderedTasks: Task[]) => {
+    try {
+      // Example implementation - update each task with its new order
+      // const updatePromises = reorderedTasks.map(task => 
+      //   axios.put(`http://localhost:5000/api/tasks/${task.id}`, { order: task.order })
+      // );
+      // await Promise.all(updatePromises);
+      
+      // Or implement a bulk update endpoint on the backend
+      // await axios.post('http://localhost:5000/api/tasks/reorder', { tasks: reorderedTasks });
+      
+      console.log('Task order saved successfully');
+    } catch (err) {
+      console.error('Error saving task order:', err);
+    }
+  };
+  */
+
   const getFilteredTasks = () => {
     const filtered = tasks.filter(task => {
       if (!searchTerm) return true;
@@ -244,6 +363,15 @@ const SoftwareEngineering = () => {
       );
     });
     
+    // First sort by order if not using another sort column
+    if (sortColumn === 'order') {
+      return filtered.sort((a, b) => {
+        if (a.order === undefined || b.order === undefined) return 0;
+        return sortDirection === 'asc' ? a.order - b.order : b.order - a.order;
+      });
+    }
+    
+    // Otherwise sort by the selected column
     return filtered.sort((a, b) => {
       let aValue = a[sortColumn];
       let bValue = b[sortColumn];
@@ -256,13 +384,13 @@ const SoftwareEngineering = () => {
       if (aValue === null || aValue === undefined) aValue = ''; // Treat null/undefined as empty string for sorting
       if (bValue === null || bValue === undefined) bValue = '';
 
-
       if (aValue < bValue) return sortDirection === 'asc' ? -1 : 1;
       if (aValue > bValue) return sortDirection === 'asc' ? 1 : -1;
       return 0;
     });
   };
-  
+
+  // Update the handleSort function to include 'order' as a possible sort column
   const handleSort = (column: keyof Task) => {
     if (sortColumn === column) {
       setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
@@ -271,6 +399,14 @@ const SoftwareEngineering = () => {
       setSortDirection('asc');
     }
   };
+
+  // Add useEffect to initialize 'order' as the default sort column when first loading
+  useEffect(() => {
+    if (tasks.length > 0 && tasks[0].order !== undefined) {
+      setSortColumn('order');
+      setSortDirection('asc');
+    }
+  }, [tasks]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -421,8 +557,16 @@ const SoftwareEngineering = () => {
     boxShadow: `0 2px 8px ${theme.pending}50, ${theme.shadowSm}`,
   };
 
+  // Function to toggle task completion - simplified
+  const handleToggleComplete = (taskId: number) => {
+    setTasks(prevTasks => 
+      prevTasks.map(task => 
+        task.id === taskId ? { ...task, completed: !task.completed } : task
+      )
+    );
+  };
 
- return (
+  return (
     <div className="animate-fadeInPage" style={{ fontFamily: theme.fontFamily, background: theme.bg, color: theme.text, padding: '30px 40px', minHeight: '100vh' }}>
       <style>
         {`
@@ -532,6 +676,15 @@ const SoftwareEngineering = () => {
         }
         ::-webkit-scrollbar-thumb:hover {
           background: ${theme.primary};
+        }
+
+        /* Drag and drop styles */
+        [draggable=true] {
+          cursor: grab;
+        }
+        
+        [draggable=true]:active {
+          cursor: grabbing;
         }
         `}
       </style>
@@ -678,6 +831,11 @@ const SoftwareEngineering = () => {
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '25px', paddingBottom:'15px', borderBottom: `1px solid ${theme.cardBorder}` }}>
             <h2 style={{ margin:0, fontSize: '1.5rem', fontWeight: 600, color: theme.textHighlight }}>
               Current Tasks
+              {isDragging && (
+                <span style={{ marginLeft: '12px', fontSize: '0.9rem', color: theme.secondary, fontWeight: 'normal' }}>
+                  Drag to reorder
+                </span>
+              )}
             </h2>
             <span style={{
               backgroundColor: theme.primary,
@@ -768,10 +926,16 @@ const SoftwareEngineering = () => {
                           <tr 
                             key={`row-${task.id}`}
                             style={{ 
-                              transition: theme.transition, cursor: 'pointer',
-                              background: theme.bgLight,
+                              transition: theme.transition, 
+                              cursor: 'grab',
+                              background: draggedTask?.id === task.id ? `${theme.primary}15` : theme.bgLight,
                             }}
                             className="table-hover-row" // Apply dashboard-like hover
+                            draggable={true}
+                            onDragStart={(e) => handleDragStart(e, task)}
+                            onDragOver={(e) => handleDragOver(e, task)}
+                            onDrop={(e) => handleDrop(e, task)}
+                            onDragEnd={handleDragEnd}
                           >
                             <td 
                               style={{ padding: '12px 10px', textAlign: 'center', borderTopLeftRadius: theme.borderRadiusSm, borderBottomLeftRadius: theme.borderRadiusSm, borderBottom: `1px solid ${theme.cardBorder}` }}
@@ -781,8 +945,48 @@ const SoftwareEngineering = () => {
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
                               </span>
                             </td>
-                            <td style={{ padding: '15px', fontSize: '14px', maxWidth: '250px', textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap', color: theme.text, fontWeight: 500, borderBottom: `1px solid ${theme.cardBorder}` }} onClick={() => handleViewTask(task)}>
+                            <td 
+                              style={{ 
+                                padding: '15px 5px 15px 15px', 
+                                width: '40px', 
+                                textAlign: 'center',
+                                borderBottom: `1px solid ${theme.cardBorder}`
+                              }}
+                              onClick={(e) => e.stopPropagation()} // Prevent row selection
+                            >
+                              <input 
+                                type="checkbox"
+                                checked={task.completed || false}
+                                onChange={() => handleToggleComplete(task.id)}
+                                style={{
+                                  width: '18px',
+                                  height: '18px',
+                                  cursor: 'pointer',
+                                  accentColor: theme.primary,
+                                }}
+                              />
+                            </td>
+                            <td style={{ 
+                              padding: '15px 15px 15px 5px', 
+                              fontSize: '14px', 
+                              maxWidth: '250px', 
+                              textOverflow: 'ellipsis', 
+                              overflow: 'hidden', 
+                              whiteSpace: 'nowrap', 
+                              color: theme.text, 
+                              fontWeight: 500, 
+                              borderBottom: `1px solid ${theme.cardBorder}`,
+                              textDecoration: task.completed ? 'line-through' : 'none',
+                              opacity: task.completed ? 0.7 : 1
+                            }} onClick={() => handleViewTask(task)}>
                               {task.title}
+                              <span style={{ marginLeft: '8px', color: theme.textSecondary, fontSize: '12px' }}>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ display: 'inline-block', verticalAlign: 'middle' }}>
+                                  <line x1="8" y1="6" x2="16" y2="6"></line>
+                                  <line x1="8" y1="12" x2="16" y2="12"></line>
+                                  <line x1="8" y1="18" x2="16" y2="18"></line>
+                                </svg>
+                              </span>
                             </td>
                             <td style={{ padding: '15px', fontSize: '14px', borderBottom: `1px solid ${theme.cardBorder}` }} onClick={() => handleViewTask(task)}>
                               <div style={{
@@ -856,15 +1060,66 @@ const SoftwareEngineering = () => {
                         style={{
                           ...cardBaseStyle, // Use the themed card style
                           padding: '20px',
-                          borderLeft: `5px solid ${catColor.text}`, // Category color accent
-                          cursor: 'pointer',
+                          borderLeft: `5px solid ${task.completed ? '#4A4A4A' : catColor.text}`, // Dimmed color for completed tasks
+                          cursor: isDragging ? 'grabbing' : 'grab',
+                          opacity: task.completed ? 0.85 : (draggedTask?.id === task.id ? 0.6 : 1),
+                          transform: draggedTask?.id === task.id ? 'scale(0.98)' : 'scale(1)',
+                          backgroundColor: task.completed ? '#2A2A2A' : theme.cardBg, // Much darker background for completed tasks
+                          borderTop: task.completed ? `1px dashed ${theme.cardBorder}` : `1px solid ${theme.cardBorder}`,
+                          borderRight: task.completed ? `1px dashed ${theme.cardBorder}` : `1px solid ${theme.cardBorder}`,
+                          borderBottom: task.completed ? `1px dashed ${theme.cardBorder}` : `1px solid ${theme.cardBorder}`,
                         }}
-                        className="card-hover-lift"
+                        className={task.completed ? "" : "card-hover-lift"} // Remove hover effect for completed tasks
+                        draggable={true}
+                        onDragStart={(e) => handleDragStart(e, task)}
+                        onDragOver={(e) => handleDragOver(e, task)}
+                        onDrop={(e) => handleDrop(e, task)}
+                        onDragEnd={handleDragEnd}
                       >
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '12px' }}>
-                          <h3 style={{ marginTop: 0, marginBottom: '8px', fontSize: '1.1rem', fontWeight: 600, color: theme.textHighlight, maxWidth: '80%' }}>
-                            {task.title}
-                          </h3>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', maxWidth: '80%' }}>
+                            <input 
+                              type="checkbox"
+                              checked={task.completed || false}
+                              onChange={() => handleToggleComplete(task.id)}
+                              onClick={(e) => e.stopPropagation()} // Prevent card selection
+                              style={{
+                                width: '20px',
+                                height: '20px', 
+                                cursor: 'pointer',
+                                accentColor: theme.primary,
+                                flexShrink: 0,
+                                marginTop: '2px'
+                              }}
+                            />
+                            <h3 style={{ 
+                              marginTop: 0, 
+                              marginBottom: '8px', 
+                              fontSize: '1.1rem', 
+                              fontWeight: 600, 
+                              color: theme.textHighlight, 
+                              textDecoration: task.completed ? 'line-through' : 'none',
+                              opacity: task.completed ? 0.7 : 1
+                            }}>
+                              {task.title}
+                              <span style={{ 
+                                display: 'inline-block',
+                                marginLeft: '8px', 
+                                color: theme.textSecondary,
+                                fontSize: '11px',
+                                padding: '2px 6px',
+                                background: `${theme.cardBorder}50`,
+                                borderRadius: '4px',
+                                verticalAlign: 'middle'
+                              }}>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ display: 'inline-block', verticalAlign: 'middle' }}>
+                                  <line x1="8" y1="6" x2="16" y2="6"></line>
+                                  <line x1="8" y1="12" x2="16" y2="12"></line>
+                                  <line x1="8" y1="18" x2="16" y2="18"></line>
+                                </svg>
+                              </span>
+                            </h3>
+                          </div>
                           <div style={{
                             padding: '4px 10px', borderRadius: '12px', fontSize: '11px', fontWeight: '500',
                             background: catColor.bg, color: catColor.text, border: `1px solid ${catColor.border}`, whiteSpace: 'nowrap'
