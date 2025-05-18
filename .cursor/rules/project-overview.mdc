@@ -1,0 +1,20 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Project Overview
+
+Chronicles Productivity is a task management application with React TypeScript frontend and Express with SQLite backend.
+
+## Key Entry Points
+- Frontend: [frontend/src/App.tsx](mdc:frontend/src/App.tsx) - Main application component
+- Backend: [backend/src/index.ts](mdc:backend/src/index.ts) - Server entry point
+
+## Main Directories
+- [frontend/src/components](mdc:frontend/src/components) - React UI components
+- [frontend/src/pages](mdc:frontend/src/pages) - Application pages/views
+- [backend/src/controllers](mdc:backend/src/controllers) - Request handlers
+- [backend/src/models](mdc:backend/src/models) - Database models
+- [backend/src/routes](mdc:backend/src/routes) - API route definitions
+

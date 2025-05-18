@@ -8,6 +8,7 @@ import financeRoutes from './routes/financeRoutes';
 import fitnessRoutes from './routes/fitnessRoutes';
 import investmentRoutes from './routes/investmentRoutes';
 import settingsRoutes from './routes/settingsRoutes';
+import generalTaskRoutes from './routes/generalTaskRoutes';
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -34,6 +35,7 @@ app.use('/api/finance', financeRoutes);
 app.use('/api/fitness', fitnessRoutes);
 app.use('/api/investments', investmentRoutes);
 app.use('/api/settings', settingsRoutes);
+app.use('/api/general-tasks', generalTaskRoutes);
 
 // Basic route for testing
 app.get('/', (req, res) => {

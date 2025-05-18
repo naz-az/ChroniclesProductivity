@@ -11,6 +11,8 @@
     "seed:finance": "ts-node src/seed/seedFinance.ts",
     "seed:fitness": "ts-node src/seed/seedFitness.ts",
     "seed:investments": "ts-node src/seed/seedInvestments.ts",
+    "seed:projects": "ts-node src/seed/seedProjects.ts",
+    "seed:general-tasks": "ts-node src/seed/seedGeneralTasks.ts",
     "seed:all": "ts-node src/seed/seedAll.ts",
     "check:finance": "node check-data.js finance",
     "check:fitness": "node check-data.js fitness",
@@ -32,5 +34,8 @@
     "sqlite3": "^5.1.7",
     "ts-node": "^10.9.2",
     "typescript": "^5.3.3"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10"
   }
 }

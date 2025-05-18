@@ -1,0 +1,23 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# Development Workflow
+
+## Setup
+1. Install all dependencies: `npm run install:all`
+2. Run both frontend and backend: `npm run dev:full`
+
+## Key Scripts
+- `npm run start:backend` - Start just the backend server
+- `npm run start:frontend` - Start just the frontend dev server
+- `npm run seed:all` - Seed the database with sample data
+- `npm run db:reset` - Reset the database
+
+## Database Operations
+- [backend/src/seed](mdc:backend/src/seed) - Contains database seed scripts
+- Database file: [backend/task.db](mdc:backend/task.db)
+
+## API Testing
+- Test API endpoints: [backend/test-api.js](mdc:backend/test-api.js)

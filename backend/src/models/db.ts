@@ -5,6 +5,7 @@ import { createFinanceTables } from './finance';
 import { createFitnessTables } from './fitness';
 import { createInvestmentTables } from './investments';
 import { createSettingsTables } from './settings';
+import { createGeneralTasksTable } from './generalTasks';
 
 // Create a database instance
 export async function getDbConnection() {
@@ -39,6 +40,7 @@ export async function initializeDb() {
     await createFitnessTables();
     await createInvestmentTables();
     await createSettingsTables();
+    await createGeneralTasksTable();
   } catch (error) {
     console.error('Error creating module tables:', error);
   }

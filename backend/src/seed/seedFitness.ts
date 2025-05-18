@@ -11,6 +11,7 @@ import {
   BodyMeasurement,
   FitnessGoal
 } from '../models/fitness';
+import { getDbConnection } from '../models/db';
 
 const seedFitnessData = async () => {
   console.log('Creating fitness tables...');
@@ -430,17 +431,124 @@ const seedFitnessData = async () => {
   console.log('Fitness data seeded successfully!');
 };
 
-// Execute the seed function if this file is run directly
+// Add a function to seed today's nutrition data
+
+const seedTodaysNutrition = async () => {
+  try {
+    const today = new Date().toISOString().split('T')[0];
+    
+    // Check if today's data already exists
+    const db = await getDbConnection();
+    const existingEntries = await db.all('SELECT * FROM fitness_nutrition WHERE date = ?', [today]);
+    
+    if (existingEntries.length > 0) {
+      console.log(`Today's nutrition data already exists (${existingEntries.length} entries).`);
+      return;
+    }
+    
+    // Add some sample nutrition entries for today
+    const todayEntries = [
+      {
+        date: today,
+        meal_type: 'breakfast',
+        food_name: 'Oatmeal with Berries',
+        calories: 320,
+        protein: 12,
+        carbs: 45,
+        fat: 8
+      },
+      {
+        date: today,
+        meal_type: 'breakfast',
+        food_name: 'Greek Yogurt',
+        calories: 150,
+        protein: 15,
+        carbs: 8,
+        fat: 5
+      },
+      {
+        date: today,
+        meal_type: 'lunch',
+        food_name: 'Grilled Chicken Salad',
+        calories: 380,
+        protein: 35,
+        carbs: 18,
+        fat: 12
+      },
+      {
+        date: today,
+        meal_type: 'lunch',
+        food_name: 'Whole Grain Bread',
+        calories: 120,
+        protein: 4,
+        carbs: 22,
+        fat: 2
+      },
+      {
+        date: today,
+        meal_type: 'snack',
+        food_name: 'Apple',
+        calories: 95,
+        protein: 0.5,
+        carbs: 25,
+        fat: 0.3
+      },
+      {
+        date: today,
+        meal_type: 'dinner',
+        food_name: 'Salmon Fillet',
+        calories: 350,
+        protein: 40,
+        carbs: 0,
+        fat: 18
+      },
+      {
+        date: today,
+        meal_type: 'dinner',
+        food_name: 'Steamed Vegetables',
+        calories: 85,
+        protein: 2,
+        carbs: 15,
+        fat: 1
+      }
+    ];
+    
+    // Insert today's entries
+    for (const entry of todayEntries) {
+      await db.run(
+        `INSERT INTO fitness_nutrition (date, meal_type, food_name, calories, protein, carbs, fat) 
+         VALUES (?, ?, ?, ?, ?, ?, ?)`,
+        [entry.date, entry.meal_type, entry.food_name, entry.calories, entry.protein, entry.carbs, entry.fat]
+      );
+    }
+    
+    console.log(`Added ${todayEntries.length} nutrition entries for today (${today}).`);
+  } catch (error) {
+    console.error('Error seeding today\'s nutrition data:', error);
+  }
+};
+
+// Export a function to run this seeder
+export const seedFitness = async () => {
+  try {
+    console.log('Seeding fitness data...');
+    await seedFitnessData();
+    await seedTodaysNutrition();
+    console.log('Fitness data seeded successfully!');
+  } catch (error) {
+    console.error('Error seeding fitness data:', error);
+  }
+};
+
+// Execute seed function
 if (require.main === module) {
-  seedFitnessData()
+  seedFitness()
     .then(() => {
-      console.log('Finished seeding fitness data');
+      console.log('Fitness data seed completed successfully');
       process.exit(0);
     })
     .catch((error) => {
-      console.error('Error seeding fitness data:', error);
+      console.error('Error during fitness data seed:', error);
       process.exit(1);
     });
-}
-
-export default seedFitnessData; 
+} 

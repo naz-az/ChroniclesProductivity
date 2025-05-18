@@ -9,7 +9,9 @@ import Finance from './pages/Finance';
 import Fitness from './pages/Fitness';
 import Investments from './pages/Investments';
 import Settings from './pages/Settings';
+import GeneralTasks from './pages/GeneralTasks';
 import { SettingsProvider } from './contexts/SettingsContext';
+import SoltwinAi2 from './Chatbot/SoltwinAi2';
 
 function App() {
   const [isLoading, setIsLoading] = useState(true);
@@ -144,6 +146,7 @@ function App() {
             <Routes>
               <Route path="/" element={<Dashboard />} />
               <Route path="/software-engineering" element={<SoftwareEngineering />} />
+              <Route path="/general-tasks" element={<GeneralTasks />} />
               <Route path="/business-projects" element={<BusinessProjects />} />
               <Route path="/business-projects/:id" element={<ProjectDetails />} />
               <Route path="/finance" element={<Finance />} />
@@ -152,6 +155,12 @@ function App() {
               <Route path="/settings" element={<Settings />} />
             </Routes>
           </main>
+          {/* Floating Chatbot - always rendered, floats above all content */}
+          <div style={{ position: 'fixed', zIndex: 100, pointerEvents: 'none', top: 0, left: 0, width: '100vw', height: '100vh' }}>
+            <div style={{ pointerEvents: 'auto', width: 'auto', height: 'auto' }}>
+              <SoltwinAi2 />
+            </div>
+          </div>
         </div>
       </Router>
     </SettingsProvider>

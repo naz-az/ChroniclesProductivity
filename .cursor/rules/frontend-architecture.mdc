@@ -1,0 +1,20 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Frontend Architecture
+
+## Structure
+- [src/main.tsx](mdc:frontend/src/main.tsx) - Entry point that renders App
+- [src/App.tsx](mdc:frontend/src/App.tsx) - Main component with routing
+- [src/components](mdc:frontend/src/components) - Reusable UI components
+- [src/pages](mdc:frontend/src/pages) - Page components for each route
+- [src/contexts](mdc:frontend/src/contexts) - React context providers
+
+## Key Patterns
+- React functional components with TypeScript
+- CSS modules for styling
+- Context API for state management
+- React Router for navigation
+

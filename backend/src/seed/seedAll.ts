@@ -2,6 +2,7 @@ import { seedFinance } from './seedFinance';
 import { seedFitness } from './seedFitness';
 import { seedProjects } from './seedProjects';
 import { seedInvestments } from './seedInvestments';
+import { seedGeneralTasks } from './seedGeneralTasks';
 
 // Run all seed functions
 const runAllSeeds = async () => {
@@ -23,6 +24,10 @@ const runAllSeeds = async () => {
     // Run investments seed
     await seedInvestments();
     console.log('✓ Investments data seed completed');
+    
+    // Run general tasks seed
+    await seedGeneralTasks();
+    console.log('✓ General tasks data seed completed');
     
     console.log('=== All seed operations completed successfully ===');
     process.exit(0);

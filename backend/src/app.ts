@@ -4,10 +4,12 @@ import taskRoutes from './routes/taskRoutes';
 import projectRoutes from './routes/projectRoutes';
 import financeRoutes from './routes/financeRoutes';
 import fitnessRoutes from './routes/fitnessRoutes';
+import generalTaskRoutes from './routes/generalTaskRoutes';
 import { createTasksTable } from './models/task';
 import { createProjectsTable } from './models/project';
 import { createFinanceTables } from './models/finance';
 import { createFitnessTables } from './models/fitness';
+import { createGeneralTasksTable } from './models/generalTasks';
 
 const app = express();
 const port = 5000;
@@ -21,6 +23,7 @@ app.use('/api/tasks', taskRoutes);
 app.use('/api/projects', projectRoutes);
 app.use('/api/finance', financeRoutes);
 app.use('/api/fitness', fitnessRoutes);
+app.use('/api/general-tasks', generalTaskRoutes);
 
 // Initialize database tables
 const initDb = async () => {
@@ -29,6 +32,7 @@ const initDb = async () => {
     await createProjectsTable();
     await createFinanceTables();
     await createFitnessTables();
+    await createGeneralTasksTable();
     console.log('Database tables initialized');
   } catch (error) {
     console.error('Error initializing database tables:', error);

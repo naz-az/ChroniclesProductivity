@@ -249,17 +249,18 @@ const seedFinanceData = async () => {
   console.log('Finance data seeded successfully!');
 };
 
-// Execute the seed function if this file is run directly
+// Export using the name expected by seedAll.ts
+export const seedFinance = seedFinanceData;
+
+// Execute seed function
 if (require.main === module) {
   seedFinanceData()
     .then(() => {
-      console.log('Finished seeding finance data');
+      console.log('Finance data seed completed successfully');
       process.exit(0);
     })
     .catch((error) => {
-      console.error('Error seeding finance data:', error);
+      console.error('Error during finance data seed:', error);
       process.exit(1);
     });
-}
-
-export default seedFinanceData; 
+} 

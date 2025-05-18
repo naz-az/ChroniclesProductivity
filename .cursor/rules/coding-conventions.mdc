@@ -1,0 +1,24 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Coding Conventions
+
+## TypeScript
+- Use TypeScript for type safety in both frontend and backend
+- Define interfaces for all data structures
+- Use explicit return types on functions
+
+## React Components
+- Use functional components with hooks
+- One component per file
+- Use named exports
+- Component files named with PascalCase
+
+## Backend
+- Use Express router for API endpoints
+- Controller functions should be separated by resource
+- Database models should handle all data operations
+- Use async/await for asynchronous operations
+

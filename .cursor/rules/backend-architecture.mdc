@@ -1,0 +1,21 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Backend Architecture
+
+## Structure
+- [src/index.ts](mdc:backend/src/index.ts) - Entry point that starts the Express server
+- [src/app.ts](mdc:backend/src/app.ts) - Express app configuration
+- [src/routes](mdc:backend/src/routes) - API route definitions
+- [src/controllers](mdc:backend/src/controllers) - Request handlers
+- [src/models](mdc:backend/src/models) - Database models
+- [src/seed](mdc:backend/src/seed) - Database seed scripts
+
+## Key Patterns
+- Express with TypeScript
+- SQLite database with custom models
+- RESTful API endpoints
+- MVC architecture (Models, Controllers, Routes)
+

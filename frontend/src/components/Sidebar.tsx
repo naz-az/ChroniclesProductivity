@@ -31,6 +31,14 @@ const Sidebar = ({ collapsed = false, toggleSidebar, onNavigate }: SidebarProps)
     </svg>
   );
 
+  const GeneralTasksIcon = ({ color = 'currentColor', size = '22px' }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+      <path d="M2 17l10 5 10-5"></path>
+      <path d="M2 12l10 5 10-5"></path>
+    </svg>
+  );
+
   const BusinessProjectsIcon = ({ color = 'currentColor', size = '22px' }) => (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <rect x="3" y="7" width="18" height="13" rx="2" ry="2"></rect>
@@ -107,6 +115,7 @@ const Sidebar = ({ collapsed = false, toggleSidebar, onNavigate }: SidebarProps)
   const navItems = [
     { path: '/', label: 'Dashboard', icon: <DashboardIcon /> },
     { path: '/software-engineering', label: 'Software Engineering', icon: <SoftwareEngineeringIcon /> },
+    { path: '/general-tasks', label: 'General Tasks', icon: <GeneralTasksIcon /> },
     { path: '/business-projects', label: 'Business Projects', icon: <BusinessProjectsIcon /> },
     { path: '/finance', label: 'Personal Finance', icon: <FinanceIcon /> },
     { path: '/investments', label: 'Investments', icon: <InvestmentsIcon /> },
